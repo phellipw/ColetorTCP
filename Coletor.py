@@ -9,8 +9,8 @@ import socket
 import select
 from datetime import datetime
 
-HOST = 'localhost' 
-PORTA = 5050 
+HOST = '0.0.0.0' 
+PORTA = 5000
 orig = (HOST, PORTA)
 conexao = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
@@ -27,21 +27,34 @@ while True:
 
     while True:
         data = conn.recv(1024000)
-        datatraduzida = str(data,'utf-8')
-        if not data:
-            print('Conexão foi perdida!')
+        def try_utf8(data):
+            try:
+                return data.decode('utf-8')
+            except UnicodeDecodeError:
+                return None
+        udata = try_utf8(data)
+        if udata is None:
+            print('Dado invalido')
             log = open('log.txt', 'a', encoding = 'utf-8')
             datahora = datetime.now()
             datahoratxt = datahora.strftime('%d/%m/%Y %H:%M')
-            log.write(f'{datahoratxt} - Sem conexão\n')
-            break 
+            log.write(f'{datahoratxt} - Dado invalido\n')
         else:
-         while True: 
-            datahora = datetime.now()
-            datahoratxt = datahora.strftime('%d/%m/%Y %H:%M')
-            print(f'{datahoratxt} - Dados enviados de {addr} e depositados em bilhete.txt')
-            log = open('log.txt', 'a', encoding = 'utf-8')
-            log.write(f'{datahoratxt} - Dados enviados de {addr} e depositados em bilhete.txt\n')
-            textfile2 = open('bilhete.txt', 'a', encoding = 'utf-8')
-            textfile2.write(datatraduzida)
-            break
+            datatraduzida = str(data,'utf-8')
+            if not data:
+                print('Conexão foi perdida!')
+                log = open('log.txt', 'a', encoding = 'utf-8')
+                datahora = datetime.now()
+                datahoratxt = datahora.strftime('%d/%m/%Y %H:%M')
+                log.write(f'{datahoratxt} - Sem conexão\n')
+                break 
+            else:
+             while True: 
+                datahora = datetime.now()
+                datahoratxt = datahora.strftime('%d/%m/%Y %H:%M')
+                print(f'{datahoratxt} - Dados enviados de {addr} e depositados em bilhete.txt')
+                log = open('log.txt', 'a', encoding = 'utf-8')
+                log.write(f'{datahoratxt} - Dados enviados de {addr} e depositados em bilhete.txt\n')
+                textfile2 = open('bilhete.txt', 'a', encoding = 'utf-8')
+                textfile2.write(datatraduzida)
+                break
