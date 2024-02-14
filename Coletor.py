@@ -1,8 +1,4 @@
-#########################################################
-# Coletor TCP/IP - Python                               #
-# Phellipe Aparecido Gomes Fogaça Ferraz                #
-# phellipefferraz@hotmail.com                           #
-#########################################################
+# made by phellipw 
 
 import subprocess
 import socket
